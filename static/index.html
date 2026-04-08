@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#689F38">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Эмч Отгоо">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23689F38'/><text y='68' x='50' text-anchor='middle' font-size='55'>🐴</text></svg>">
+<title>Эмч Отгоо</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0A0F0A;overflow:hidden}
+#root{height:100dvh;overflow:hidden}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+
+
+// ═══════════════════════════════════════════════
+//  🐴 ЭМЧ ОТГОО — PRO
+//  Мал эмнэлгийн мэргэжлийн AI систем
+// ═══════════════════════════════════════════════
+
+const ANIMALS = [
+  {id:"aduu",n:"Адуу",e:"🐴",l:"Equus caballus",w:350},
+  {id:"uher",n:"Үхэр",e:"🐄",l:"Bos taurus",w:400},
+  {id:"honi",n:"Хонь",e:"🐑",l:"Ovis aries",w:45},
+  {id:"yamaa",n:"Ямаа",e:"🐐",l:"Capra hircus",w:35},
+  {id:"temee",n:"Тэмээ",e:"🐪",l:"Camelus bactrianus",w:500},
+];
+
+const DRUGS=[
+  {name:"Oxytetracycline LA",conc:"200мг/мл",doses:{Адуу:6.6,Үхэр:20,Хонь:20,Ямаа:20,Тэмээ:10},route:"IM",cv:200,freq:"Нэг удаа",wd:"Сүү:10 хоног, Мах:35 хоног"},
+  {name:"Penicillin G",conc:"300,000 IU/мл",doses:{Адуу:20000,Үхэр:20000,Хонь:20000,Ямаа:20000,Тэмээ:20000},route:"IM",cv:300000,freq:"SID x5",iu:true,wd:"Сүү:3-5, Мах:14-30 хоног"},
+  {name:"Flunixin",conc:"50мг/мл",doses:{Адуу:1.1,Үхэр:2.2,Хонь:2.2,Ямаа:2.2,Тэмээ:1.1},route:"IV",cv:50,freq:"SID x3-5",wd:"Сүү:4, Мах:4 хоног"},
+  {name:"Ivermectin",conc:"10мг/мл",doses:{Адуу:0.2,Үхэр:0.2,Хонь:0.2,Ямаа:0.2,Тэмээ:0.2},route:"SC",cv:10,freq:"Нэг удаа",wd:"Мах:35-49 хоног"},
+  {name:"Albendazole",conc:"25мг/мл",doses:{Адуу:5,Үхэр:10,Хонь:7.5,Ямаа:7.5,Тэмээ:7.5},route:"PO",cv:25,freq:"Нэг удаа",wd:"Сүү:4, Мах:14 хоног"},
+  {name:"Dexamethasone",conc:"4мг/мл",doses:{Адуу:0.08,Үхэр:0.08,Хонь:0.2,Ямаа:0.2,Тэмээ:0.08},route:"IV/IM",cv:4,freq:"SID x1-3",wd:"⚠️Жирэмсэнд хориглоно"},
+  {name:"Meloxicam",conc:"20мг/мл",doses:{Адуу:0.6,Үхэр:0.5,Хонь:0.5,Ямаа:0.5,Тэмээ:0.5},route:"SC/IV",cv:20,freq:"Нэг удаа",wd:"Сүү:5, Мах:15 хоног"},
+  {name:"Enrofloxacin",conc:"100мг/мл",doses:{Адуу:0,Үхэр:7.5,Хонь:5,Ямаа:5,Тэмээ:5},route:"SC",cv:100,freq:"SID x3",wd:"⚠️Адуунд хориглоно"},
+  {name:"Atropine",conc:"1мг/мл",doses:{Адуу:0.02,Үхэр:0.05,Хонь:0.05,Ямаа:0.05,Тэмээ:0.05},route:"IV/IM",cv:1,freq:"Яаралтай",wd:"—"},
+  {name:"Adrenaline",conc:"1мг/мл",doses:{Адуу:0.01,Үхэр:0.01,Хонь:0.01,Ямаа:0.01,Тэмээ:0.01},route:"IM/SC",cv:1,freq:"Яаралтай",wd:"—"},
+  {name:"Ca Borogluconate",conc:"20%",doses:{Адуу:0,Үхэр:1.25,Хонь:0,Ямаа:0,Тэмээ:0},route:"IV УДААН",cv:1,freq:"Нэг удаа",dm:true,wd:"—"},
+];
+
+const DISEASES={
+  gots:{l:"🔴 Гоц халдварт",d:[
+    {n:"Шүлхий (FMD)",s:"Амны цэврүү, шүлстэх, дохолох, 40-41°C, сүү буурах, туурайн завсарт шарх",q:"14-21 хоног хорио, 3км бүс, NaOH 2%. МХЕГ, OIE-д мэдэгдэх",t:"Тусгай эмчилгээ байхгүй. Шарх угаах, антисептик",z:false},
+    {n:"PPR",s:"40-42°C, хамрын идээ, амны эвдрэл, суулгалт, уушгины хатгалгаа",q:"21 хоног, stamping out, 10км бүс",t:"OTC 10мг/кг хоёрдогч халдварт",z:false},
+    {n:"Галзуу (Rabies)",s:"Зан авир өөрчлөгдөх, түрэмгийлэх, шүлстэх, залгиж чадахгүй, саажилт, 100% үхэл",q:"Устгах, 15км бүс. МХЕГ, ЭМГ",t:"ЭМЧИЛГЭЭ БАЙХГҮЙ. Хүнд хазуулсан бол PEP вакцин!",z:true},
+    {n:"Боом (Anthrax)",s:"Гэнэтийн үхэл, байгалийн нүхнээс хар цус, хаван. ⚠️ЗАДЛАХГҮЙ!",q:"Шатаах/булшлах, 20 жил хорио. ЗООНОЗ!",t:"Penicillin G 20,000 IU/кг IV BID. Эрт эхлэх",z:true},
+    {n:"Цэцэг (LSD/Pox)",s:"Арьсанд 2-5см зангилаа, халуурах, лимф зангилаа томрох, сүү буурах",q:"28 хоног, шавж хяналт. Вакцин",t:"Хоёрдогч халдварт антибиотик",z:false},
+  ]},
+  haldvart:{l:"🟠 Халдварт",d:[
+    {n:"Бруцеллёз",s:"Зулбалт (сүүлийн 3 сард), үе мөчний өвдөлт, төмсөг хаван, халуурах",q:"Устгах/тусгаарлах. Зулбасан ургийг шатаах",t:"Малд эмчлэхгүй. Вакцин: S19, Rev-1. ⚠️ЗООНОЗ!",z:true},
+    {n:"Пастереллёз",s:"41-42°C, хоолой хаван, амьсгаадалт, хамрын нус, уушгины хатгалгаа",t:"OTC LA 20мг/кг IM; Florfenicol 20мг/кг; Flunixin 1.1мг/кг",z:false},
+    {n:"Клостридиоз",s:"Гэнэтийн үхэл, хэвлий хөөх, булчингийн хар некроз (blackleg), таталт",t:"Penicillin G 20,000 IU/кг IM BID. Вакцинжуулах",z:false},
+    {n:"Листериоз",s:"Толгой хазайх, нэг талын саажилт, залгиж чадахгүй, шүлстэх",t:"Penicillin G 44,000 IU/кг BID x14 хоног",z:true},
+    {n:"Эхинококкоз",s:"Элэг/уушгинд уйланхай (нядалгаар илрэх). ⚠️Хүнд: элэгний уйланхай",t:"Albendazole 7.5мг/кг; Нохой: Praziquantel 5мг/кг",z:true},
+  ]},
+  haldvargui:{l:"🟢 Халдваргүй",d:[
+    {n:"Тимпани (хэвлий хөөлт)",s:"Зүүн хэвлий хөөх, амьсгаадах, тэвдэх, хоолгүй",t:"🚨Trocar зүүн нэхийд. Poloxalene 25-50г PO. Ургамлын тос 200-500мл PO. Хүнд: руменотоми"},
+    {n:"Кетоз",s:"Сүү буурах, идэш багасах, турах, ацетоны үнэр, мэдрэлийн шинж",t:"Glucose 50% 500мл IV; Propylene glycol 300мл PO BID x5; Dexamethasone 20мг IM"},
+    {n:"Гипокальцеми",s:"Төллөсний дараа хэвтэх, булчин чичрэх, бие хүйтрэх, ухаан балартах",t:"🚨Ca borogluconate 20% 500мл IV УДААН (10-20мин). Зүрх хянах!"},
+    {n:"Ламинит",s:"Хүчтэй дохолох, туурай халуун, тоготнох пульс, хэвтмэл",t:"Адуу: Phenylbutazone 4.4мг/кг PO BID. Үхэр: Ketoprofen 3мг/кг IV"},
+    {n:"Хордлого",s:"Хэвлий өвдөх, суулгалт, таталт, шүлстэх, амьсгаадалт",t:"Activated Charcoal 1-3г/кг PO; IV шингэн; Atropine (фосфорорганикт)"},
+  ]},
+};
+
+const LAB={
+  blood:{t:"🩸 Цус",d:[
+    {l:"Дээж",i:"💉",d:"V.jugularis: EDTA (ягаан-CBC), сийвэн (улаан-биохими). Үхэр 10-20мл, Хонь 5-10мл"},
+    {l:"Хэвийн CBC",i:"📊",d:"Үхэр: RBC 5-10×10¹²/л, WBC 4-12×10⁹/л, Hb 80-150г/л, PCV 24-46%. Хонь: RBC 9-15, WBC 4-12, Hb 90-150, PCV 27-45%. Адуу: RBC 6.5-12.5, WBC 5.4-14.3, Hb 110-190, PCV 32-53%"},
+    {l:"Биохими",i:"🔬",d:"Глюкоз: Үхэр 2.5-4.2ммоль/л. BUN: 3.3-8.3. Ca: 2.1-2.8. P: 1.4-2.5. ALT,AST,GGT-элэг. CK-булчин"},
+    {l:"Хадгалалт",i:"📦",d:"EDTA: 2-8°C 24цаг. Сийвэн: -20°C. Хөлдөөж гэсгэхгүй"},
+  ]},
+  fecal:{t:"💩 Баас",d:[
+    {l:"Дээж",i:"🧤",d:"Шулуун гэдэснээс 5-10г. Битүү сав. Нэр, огноо тэмдэглэх"},
+    {l:"Аргууд",i:"🔬",d:"McMaster EPG: >500 EPG (хонь)=эмчилгээ. Flotation: өндөг. Sedimentation: элэгний хорхой. Baermann: уушгины хорхой"},
+    {l:"Хадгалалт",i:"📦",d:"Шинэхэн шинжлэх. Хөргөгч: 24цаг. Формалин 10% удаан. Хөлдөөхгүй"},
+  ]},
+  urine:{t:"💧 Шээс",d:[
+    {l:"Дээж",i:"🧪",d:"Чөлөөт шээс / катетер / цистоцентез. 10-20мл"},
+    {l:"Шинжилгээ",i:"📊",d:"pH: Үхэр 7.4-8.4, Адуу 7.0-9.0. Хувийн жин: 1.020-1.040. Зурвас: глюкоз, уураг, кетон, цус"},
+  ]},
+  skin:{t:"🩹 Арьс",d:[
+    {l:"Хусалт",i:"🔪",d:"Хачиг: гүн хусалт (Demodex,Sarcoptes). Мөөгөнцөр: KOH, DTM. Скотч тейп: гадаргуу"},
+    {l:"Нян тариалалт",i:"🧫",d:"Стерил тампон → Stuart/Amies. Антибиотик ӨМНӨ авах!"},
+  ]},
+};
+
+const REPRO={
+  breed:{t:"🐂 Хээлтүүлэг",d:[
+    {l:"Байгалийн",i:"🐄",d:"1 бух: 25-40 эм. Хээлтүүлгийн улирал: Үхэр 6-8 сар, Хонь 10-11, Ямаа 10-12, Тэмээ 1-3 сар"},
+    {l:"Зохиомол (AI)",i:"💉",d:"Хөлдөөсөн үр → гэсгэх 37°C 30сек → ректо-цервикал. AM/PM дүрэм. CIDR + PGF2α синхрончлол"},
+    {l:"Хөвөгч",i:"👁️",d:"Үхэр 18-24цаг, Хонь/Ямаа 24-36цаг. Шинж: бусдын нуруу дээр үсрэх, тэвдэх, бялзуйх"},
+  ]},
+  preg:{t:"🤰 Жирэмсэн",d:[
+    {l:"Ректал",i:"🧤",d:"Үхэр: 35-40 хоногоос. Membrane slip. 60+: котиледон. 90+: урга мэдрэгдэнэ"},
+    {l:"УЗИ",i:"📱",d:"Үхэр: 28-30 хоногоос (5-7.5MHz). Хонь: 25-30 хоног (3.5-5MHz). Олон урга: 45+. Хүйс: 55-65 хоног"},
+    {l:"Хугацаа",i:"📅",d:"Үхэр: 283 хоног. Хонь/Ямаа: 150. Адуу: 340. Тэмээ: 390. Нохой: 63"},
+  ]},
+  calve:{t:"🍼 Төрөлт",d:[
+    {l:"Хэвийн",i:"✅",d:"3 үе: 1)Умайн хүзүү нээгдэх 2-6цаг 2)Тугал гарах 30мин-2цаг 3)Ихэс 2-8цаг. Урд хөлүүд→хамар→толгой"},
+    {l:"Дистоция",i:"🚨",d:"Буруу байрлал засах (lubricant), OB chains/rope. 2цаг+ бол малын эмч! Кесар: зүүн flank, Lidocaine 2% inverted L"},
+    {l:"Ихэс саатал",i:"⏱️",d:"Үхэр >12цаг. ТАТАХГҮЙ! OTC 20мг/кг IM. PGF2α. Кальци нэмэлт"},
+    {l:"Мастит",i:"🥛",d:"Дэлэн хатуу/халуун/өвдөлтэй. Сүү: бөөн/цус. CMT шинжилгээ. Intramammary антибиотик + системик"},
+    {l:"Метрит",i:"🔥",d:"Төрснөөс 21 хоногт. Үнэртэй идээ, халуурах. Ceftiofur 2.2мг/кг SC SID x5. PGF2α 500мкг IM"},
+  ]},
+};
+
+const SURG={
+  cast:{t:"✂️ Кастраци",d:[
+    {l:"Хаалттай",i:"🔧",d:"Эластратор бөгж: 1-4 долоо хоногт. Бурдигаццо: 2-6 сар. Tetanus antitoxin! Meloxicam 0.5мг/кг + Lidocaine 2%"},
+    {l:"Нээлттэй",i:"🔪",d:"Lidocaine 2% 10-20мл/төмсөг. Скротум зүсэх→төмсөг→үрийн хүүдий хүлж зүсэх. Povidone-iodine. Penicillin x3"},
+  ]},
+  rumen:{t:"🫄 Руменотоми",d:[
+    {l:"Заалт",i:"📋",d:"Гадны биет, хүнд тимпани, нугалуурын бөглөрөл"},
+    {l:"Арга",i:"🔪",d:"Зүүн flank. Paravertebral block T13,L1,L2 Lidocaine 2%. Давхар оёдол: Cushing+Lembert"},
+    {l:"Дараа",i:"💊",d:"Pen-Strep IM x5-7. Flunixin 2.2мг/кг IV SID x3. Зөөлөн тэжээл 3-5 хоног. Оёдол авах 10-14"},
+  ]},
+  trocar:{t:"🫁 Троакар",d:[
+    {l:"Заалт",i:"🚨",d:"Яаралтай хийн тимпани. Хөөсөрхөг бол: Poloxalene PO эхлээд"},
+    {l:"Цэг",i:"🎯",d:"Зүүн нэхий: сүүлийн хавирганы ард, нурууны ялтаснаас алган доош. Баруун тохой руу чиглэнэ"},
+  ]},
+  suture:{t:"🧵 Оёдол",d:[
+    {l:"Утас",i:"🧶",d:"Шингээгддэг: Vicryl, Dexon (дотор). Шингээгддэггүй: Нейлон, Prolene (арьс). Үхэр арьс: 2-0/0"},
+    {l:"Арга",i:"✂️",d:"Арьс: Simple interrupted. Булчин: Simple continuous. Гэдэс: Cushing+Lembert. Умай: Utrecht"},
+    {l:"Мэдээ алдуулалт",i:"💉",d:"Lidocaine 2%: Үхэр 10мг/кг, Адуу 6мг/кг, Хонь 5мг/кг. Epidural: 0.2мг/кг. Xylazine седаци: Үхэр 0.05мг/кг IV"},
+  ]},
+};
+
+const REGIONS=[
+  {r:"🏔️ Баруун",a:"Баян-Өлгий, Ховд, Увс, Завхан, Говь-Алтай",d:"Шүлхий, Бруцеллёз, Боом, Пастереллёз, Эхинококкоз",risk:"Зуд ӨНДӨР. Хил дамнасан халдвар",v:"Шүлхий x2, Боом, Бруцеллёз"},
+  {r:"🌲 Хангай",a:"Архангай, Өвөрхангай, Баянхонгор, Хөвсгөл",d:"Бруцеллёз, Сүрьеэ, Клостридиоз, Листериоз, Fasciola",risk:"Бэлчээр доройтол. Намгархаг→Fasciola. Зуд ДУНД",v:"Шүлхий x2, Боом, Клостридийн"},
+  {r:"🏙️ Төв",a:"Төв, Сэлэнгэ, Булган, Дархан-Уул",d:"Бруцеллёз, Сүрьеэ, Пастереллёз, Мастит",risk:"Нягтаршил→халдвар. Ферм→мастит",v:"Шүлхий, Бруцеллёз, Клостридийн"},
+  {r:"🐪 Говь",a:"Дорноговь, Дундговь, Өмнөговь",d:"Тэмээний цэцэг, Шүлхий, Боом, Хордлого",risk:"Усны хомсдол. Хар/шороон зуд",v:"Шүлхий x2, Боом, Тэмээний цэцэг"},
+  {r:"🌾 Дорнод",a:"Дорнод, Сүхбаатар, Хэнтий",d:"Шүлхий, Бруцеллёз, Адууны тахал, Галзуу",risk:"Хил дамнасан. Зэрлэг амьтан→галзуу,боом",v:"Шүлхий x2, Боом, Галзуу"},
+];
+
+const SYSTEMS=[{id:"gi",n:"Хоол боловсруулах",i:"🫄"},{id:"resp",n:"Амьсгал",i:"🫁"},{id:"ms",n:"Яс-булчин",i:"🦴"},{id:"skin",n:"Арьс",i:"🩹"},{id:"eye",n:"Нүд",i:"👁️"},{id:"repro",n:"Үржихүй",i:"🍼"},{id:"cardio",n:"Зүрх",i:"❤️"},{id:"neuro",n:"Мэдрэл",i:"🧠"},{id:"uri",n:"Шээс",i:"💧"},{id:"inf",n:"Халдвар",i:"🦠"},{id:"meta",n:"Солилцоо",i:"⚗️"},{id:"emer",n:"Яаралтай",i:"🚨"}];
+const TQ=["Мал хэдэн настай?","Хүйс?","Хэзээнээс шинж илэрсэн?","Температур?","Идэш хэвийн?","Ус уух чадвар?","Баас/шээс хэвийн?","Сүүлийн вакцин?","Сүргт өөр өвчтэй мал?"];
+
+const GEMINI_URL="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+
+// Build full knowledge base string for AI
+const buildKB=()=>{
+  let kb="═══ ӨВЧНИЙ МЭДЭЭЛЛИЙН САН ═══\n";
+  Object.values(DISEASES).forEach(cat=>{kb+="\n"+cat.l+":\n";cat.d.forEach(d=>{kb+=`• ${d.n}${d.z?" [ЗООНОЗ]":""}\n  Шинж: ${d.s}\n`;if(d.t)kb+=`  Эмчилгээ: ${d.t}\n`;if(d.q)kb+=`  Хорио: ${d.q}\n`;});});
+  kb+="\n═══ ЭМИЙН САН ═══\n";
+  DRUGS.forEach(d=>{kb+=`• ${d.name} (${d.conc}) ${d.route} ${d.freq}\n  Тун: ${Object.entries(d.doses).map(([a,v])=>a+":"+v+(d.iu?"IU":"мг")+"/кг").join(", ")}\n  Хаялт: ${d.wd}\n`;});
+  kb+="\n═══ ЛАБОРАТОРИЙН ЗААВАР ═══\n";
+  Object.values(LAB).forEach(s=>{kb+=s.t+":\n";s.d.forEach(i=>{kb+=`  ${i.l}: ${i.d}\n`;});});
+  kb+="\n═══ НӨХӨН ҮРЖИХҮЙ ═══\n";
+  Object.values(REPRO).forEach(s=>{kb+=s.t+":\n";s.d.forEach(i=>{kb+=`  ${i.l}: ${i.d}\n`;});});
+  kb+="\n═══ МЭС ЗАСАЛ ═══\n";
+  Object.values(SURG).forEach(s=>{kb+=s.t+":\n";s.d.forEach(i=>{kb+=`  ${i.l}: ${i.d}\n`;});});
+  kb+="\n═══ БҮС НУТАГ ═══\n";
+  REGIONS.forEach(r=>{kb+=`${r.r} (${r.a}): Өвчин: ${r.d}. Эрсдэл: ${r.risk}. Вакцин: ${r.v}\n`;});
+  return kb;
+};
+
+const SYS_P=`Чи бол "Эмч Отгоо" — Монголын мал эмнэлгийн мэргэжлийн ветеринар доктор. 20+ жил туршлагатай, таван хошуу малд мэргэшсэн.
+
+ЧУХАЛ ДҮРЭМ: Чи доорх МЭДЭЭЛЛИЙН САН дээр тулгуурлан хариулна. Энэ мэдээллийн санд байгаа өвчин, эм, тун, лаб заавар, мэс заслын заавар, бүс нутгийн мэдээллийг ашиглан хариулт бичнэ.
+
+${buildKB()}
+
+ПРОТОКОЛ: 📋Анамнез→🔬Үзлэг→🏥Ялган оношилгоо(магадлалтай)→📊Лаб→💊Эмчилгээ(тун мг/кг,зам IM/IV/SC/PO,давтамж,хаялт хугацаа)→🛡️Хорио→🔄Хяналт→⚠️Сэрэмжлүүлэг
+Монгол хэлээр хариулах. Латин нэршилтэй. Хүнд тохиолдолд малын эмч дуудахыг зөвлөх. Зоонозын өвчинд хүнд халдах аюулыг анхааруулах.`;
+
+const offDiag=(text)=>{
+  const t=text.toLowerCase();
+  const all=[...DISEASES.gots.d,...DISEASES.haldvart.d,...DISEASES.haldvargui.d];
+  const m=all.filter(d=>{const ss=d.s.toLowerCase().split(/[,;]/);return ss.some(s=>s.trim().length>3&&t.includes(s.trim().slice(0,6)))||t.includes(d.n.toLowerCase().slice(0,5));});
+  if(!m.length)return null;
+  let r="📋 **МЭДЭЭЛЛИЙН САНГИЙН ОНОШИЛГОО** (офлайн)\n\n";
+  m.forEach((d,i)=>{r+=`${i+1}. **${d.n}**${d.z?" ⚠️ЗООНОЗ":""}\n   Шинж: ${d.s}\n`;if(d.t)r+=`   💊 ${d.t}\n`;if(d.q)r+=`   🛡️ ${d.q}\n`;r+="\n";});
+  r+="⚠️ Урьдчилсан оношилгоо. Интернэттэй үед AI нарийвчлана.";return r;
+};
+
+const App = function EmchOtgoo(){
+  const [msgs,setMsgs]=React.useState([]);
+  const [inp,setInp]=React.useState("");
+  const [load,setLoad]=React.useState(false);
+  const [anim,setAnim]=React.useState(null);
+  const [mode,setMode]=React.useState("home");
+  const [tD,setTD]=React.useState({});
+  const [tS,setTS]=React.useState(0);
+  const [sys,setSys]=React.useState(null);
+  const [cN,setCN]=React.useState(0);
+  const [dF,setDF]=React.useState("gots");
+  const [eI,setEI]=React.useState(null);
+  const [cDrug,setCDrug]=React.useState(0);
+  const [cAnim,setCAnim]=React.useState("Үхэр");
+  const [cWt,setCWt]=React.useState(400);
+  const [sub,setSub]=React.useState("");
+  const [key,setKey]=React.useState(()=>{try{return localStorage.getItem("gk")||""}catch{return""}});
+  const [online,setOnline]=React.useState(navigator.onLine);
+  const [cases,setCases]=React.useState(()=>{try{return JSON.parse(localStorage.getItem("vc")||"[]")}catch{return[]}});
+  const [settings,setSettings]=React.useState(false);
+  // Image form
+  const [imgPrev,setImgPrev]=React.useState(null);
+  const [imgD,setImgD]=React.useState(null);
+  const [imgAnim,setImgAnim]=React.useState("");
+  const [imgNote,setImgNote]=React.useState("");
+
+  const er=React.useRef(null),ir=React.useRef(null),fr=React.useRef(null);
+  React.useEffect(()=>{er.current?.scrollIntoView({behavior:"smooth"});},[msgs,load]);
+  React.useEffect(()=>{if(mode==="chat"&&ir.current)ir.current.focus();},[mode]);
+  React.useEffect(()=>{const a=()=>setOnline(true),b=()=>setOnline(false);window.addEventListener("online",a);window.addEventListener("offline",b);return()=>{window.removeEventListener("online",a);window.removeEventListener("offline",b);};},[]);
+  const sk=(k)=>{setKey(k);try{localStorage.setItem("gk",k)}catch{}};
+  const sc=(q,a)=>{const c=[{q,a,d:new Date().toISOString()},...cases].slice(0,50);setCases(c);try{localStorage.setItem("vc",JSON.stringify(c))}catch{}};
+
+  const send=async(text,extra="",img=null)=>{
+    if(!text.trim()&&!img)return;
+    const um={role:"user",content:text||"📷 Зураг"};
+    const nx=[...msgs,um];setMsgs(nx);setInp("");setLoad(true);
+    const dbR=offDiag(text);
+    if(online&&key){
+      try{
+        const sp=`${SYS_P}${extra?"\n\n"+extra:""}${dbR?"\n\nМЭДЭЭЛЛИЙН САНГИЙН ҮР ДҮН:\n"+dbR:""}`;
+        const contents=nx.map(m=>({role:m.role==="user"?"user":"model",parts:[{text:m.content}]}));
+        if(img){contents[contents.length-1]={role:"user",parts:[{inline_data:{mime_type:img.type,data:img.data}},{text:text||"Зургийг оношлоно уу."}]};}
+        const r=await fetch(`${GEMINI_URL}?key=${key}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({system_instruction:{parts:[{text:sp}]},contents,generationConfig:{maxOutputTokens:2048,temperature:0.7}})});
+        const d=await r.json();
+        const t=d.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("\n")||"";
+        if(t){const full=dbR?dbR+"\n\n━━━━━━━━━━━━━━\n\n🐴 **ЭМЧ ОТГОО AI:**\n\n"+t:t;setMsgs([...nx,{role:"assistant",content:full}]);sc(text,full);}
+        else throw new Error(d.error?.message||"Хоосон хариулт");
+      }catch(e){
+        if(dbR)setMsgs([...nx,{role:"assistant",content:dbR+"\n\n⚠️ AI: "+e.message}]);
+        else setMsgs([...nx,{role:"assistant",content:"⚠️ "+e.message}]);
+      }
+    }else{
+      if(dbR){setMsgs([...nx,{role:"assistant",content:dbR}]);sc(text,dbR);}
+      else setMsgs([...nx,{role:"assistant",content:"📵 **Офлайн**\n\nТохирох өвчин олдсонгүй.\n\nОфлайн: 📚Өвчин, 🧮Тун тооцоолуур, 🔬Лаб, 🐣Үржихүй, 🔪Мэс засал, 🗺️Бүс нутаг"}]);
+    }
+    setLoad(false);
+  };
+
+  // Image handlers
+  const onImg=(e)=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{setImgPrev(r.result);setImgD({type:f.type,data:r.result.split(",")[1]});setMode("imgForm");setImgAnim("");setImgNote("");};r.readAsDataURL(f);e.target.value="";};
+  const submitImg=()=>{
+    const p=`📷 ЗУРАГ ОНОШИЛГОО\n\n${imgAnim?"Малын төрөл: "+imgAnim+"\n":""}${imgNote?"Малчны тайлбар: "+imgNote+"\n":""}\nЗургийг нарийвчлан шинжилж:\n1. Харагдаж буй шинж тэмдэг\n2. Ялган оношилгоо (магадлалтай)\n3. Эмчилгээний протокол\n4. Яаралтай эсэх\n5. Нэмэлт шинжилгээ`;
+    setMode("chat");send(p,"",imgD);setImgPrev(null);setImgD(null);
+  };
+
+  const startEx=(a,s)=>{setAnim(a);setSys(s);setMode("triage");setTS(0);setTD({});setCN(c=>c+1);};
+  const tAns=(a)=>{const nd={...tD,[TQ[tS]]:a};setTD(nd);if(tS<TQ.length-1){setTS(tS+1);setInp("");}else{setMode("chat");send(`КЕЙС №${cN}\nМал: ${anim.n} (${anim.l})\nТогтолцоо: ${sys.n}\n\nАНАМНЕЗ:\n${Object.entries(nd).map(([q,a])=>`${q}→${a}`).join("\n")}\n\nБүрэн клиник оношилгоо хий.`);}};
+  const qk=(t)=>{setMode("chat");send(t);};
+  const rst=()=>{setMsgs([]);setAnim(null);setSys(null);setMode("home");setTD({});setTS(0);setEI(null);};
+
+  const fmt=(text)=>text.split("\n").map((l,i)=>{let p=l.replace(/\*\*(.*?)\*\*/g,'<strong style="color:#B8E6B8">$1</strong>').replace(/🚨(.*)/g,'<span style="color:#FF5252;font-weight:700">🚨$1</span>').replace(/⚠️(.*)/g,'<span style="color:#FFB74D;font-weight:600">⚠️$1</span>');const h=/^(📋|🔬|🏥|📊|💊|🔄|⚠️|🚨|🛡️)/.test(l);return<p key={i} style={{margin:l===""?"5px 0":"2px 0",fontSize:h?"12.5px":"12px",fontWeight:h?600:400,borderLeft:h?"2px solid rgba(139,195,74,0.35)":"none",paddingLeft:h?"8px":0}} dangerouslySetInnerHTML={{__html:p}}/>;});
+
+  // Styles
+  const C={bg:"linear-gradient(175deg,#0A0F0A 0%,#111C12 35%,#0D170E 70%,#080D08 100%)",accent:"#8BC34A",accent2:"#689F38",dark1:"#1B2A1C",dark2:"#243326",txt:"#E0E8E0",txt2:"#A0B8A0",txt3:"#6B8B6B"};
+  const tb=(on)=>({padding:"5px 10px",borderRadius:"8px",border:on?`1.5px solid ${C.accent}55`:"1px solid #ffffff08",background:on?"rgba(139,195,74,0.1)":"rgba(255,255,255,0.02)",color:on?C.accent:C.txt3,cursor:"pointer",fontSize:"10px",fontWeight:on?700:400,whiteSpace:"nowrap",transition:"all 0.2s"});
+  const card=ch=><div style={{marginBottom:"5px",padding:"10px 12px",borderRadius:"10px",border:"1px solid #ffffff08",background:"rgba(255,255,255,0.018)"}}>{ch}</div>;
+
+  const drug=DRUGS[cDrug];const dpk=drug.doses[cAnim]||0;const td=dpk*cWt;const ml=drug.dm?td:td/drug.cv;
+
+  return(
+    <div style={{minHeight:"100vh",background:C.bg,fontFamily:"'SF Pro Text','Noto Sans',system-ui,sans-serif",color:C.txt,display:"flex",flexDirection:"column",maxWidth:"480px",margin:"0 auto"}}>
+      {/* ═══ HEADER ═══ */}
+      <div style={{padding:"12px 16px",background:"rgba(15,25,15,0.95)",borderBottom:"1px solid rgba(139,195,74,0.08)",display:"flex",alignItems:"center",gap:"10px",flexShrink:0}}>
+        <div style={{width:38,height:38,borderRadius:"12px",background:`linear-gradient(135deg,${C.accent2},${C.accent})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"20px",boxShadow:`0 2px 12px ${C.accent}30`}}>🐴</div>
+        <div style={{flex:1}}>
+          <div style={{fontWeight:800,fontSize:"15px",color:C.accent,letterSpacing:"-0.3px"}}>Эмч Отгоо</div>
+          <div style={{fontSize:"9px",color:C.txt3,fontWeight:500}}>Мал эмнэлгийн Pro систем</div>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
+          <div style={{width:8,height:8,borderRadius:"50%",background:online?"#8BC34A":"#FF5252",boxShadow:`0 0 6px ${online?"#8BC34A":"#FF5252"}50`}}/>
+          <button onClick={()=>setSettings(!settings)} style={{width:30,height:30,borderRadius:"8px",background:"rgba(255,255,255,0.04)",border:"none",color:C.txt3,cursor:"pointer",fontSize:"14px"}}>⚙️</button>
+          {mode!=="home"&&<button onClick={rst} style={{width:30,height:30,borderRadius:"8px",background:"rgba(255,255,255,0.04)",border:"none",color:C.txt3,cursor:"pointer",fontSize:"12px"}}>✕</button>}
+        </div>
+      </div>
+
+      {/* SETTINGS */}
+      {settings&&(<div style={{padding:"12px 16px",background:"rgba(10,20,10,0.95)",borderBottom:"1px solid rgba(139,195,74,0.06)"}}>
+        <div style={{fontSize:"12px",fontWeight:700,color:C.accent,marginBottom:"8px"}}>⚙️ Тохиргоо</div>
+        <div style={{fontSize:"10px",color:C.txt3,marginBottom:"4px"}}>Google Gemini API key — <span style={{color:C.accent}}>aistudio.google.com</span></div>
+        <div style={{display:"flex",gap:"6px",marginBottom:"8px"}}><input type="password" value={key} onChange={e=>sk(e.target.value)} placeholder="AIza..." style={{flex:1,padding:"8px 10px",borderRadius:"8px",background:"rgba(255,255,255,0.04)",border:"1px solid rgba(139,195,74,0.1)",color:C.txt,fontSize:"12px",outline:"none",fontFamily:"inherit"}}/><span style={{alignSelf:"center",fontSize:"14px"}}>{key?"✅":"❌"}</span></div>
+        <div style={{fontSize:"10px",color:C.txt3}}>💾 {cases.length} кейс хадгалсан{cases.length>0&&<button onClick={()=>{setMode("history");setSettings(false);}} style={{marginLeft:"8px",padding:"3px 8px",borderRadius:"5px",border:`1px solid ${C.accent}30`,background:"transparent",color:C.accent,cursor:"pointer",fontSize:"9px"}}>📋 Харах</button>}</div>
+      </div>)}
+
+      {/* NAV */}
+      <div style={{display:"flex",gap:"3px",padding:"8px 14px",borderBottom:"1px solid #ffffff06",flexShrink:0,overflowX:"auto"}}>
+        {[{m:"home",l:"🏠"},{m:"diseases",l:"📚 Өвчин"},{m:"calc",l:"🧮 Тун"},{m:"lab",l:"🔬 Лаб"},{m:"repro",l:"🐣"},{m:"surg",l:"🔪"},{m:"region",l:"🗺️"},{m:"img",l:"📷"}].map(t=>(
+          <button key={t.m} onClick={()=>{if(t.m==="img")fr.current?.click();else{setMode(t.m);setEI(null);}}} style={tb(mode===t.m)}>{t.l}</button>
+        ))}
+      </div>
+      <input ref={fr} type="file" accept="image/*" capture="environment" style={{display:"none"}} onChange={onImg}/>
+
+      {/* ═══ CONTENT ═══ */}
+      <div style={{flex:1,overflowY:"auto",padding:"12px 14px 8px",display:"flex",flexDirection:"column",gap:"6px"}}>
+
+        {/* HOME */}
+        {mode==="home"&&(<div style={{animation:"fi 0.4s ease"}}>
+          <div style={{textAlign:"center",padding:"20px 16px 16px"}}>
+            <div style={{fontSize:"44px",marginBottom:"6px",filter:"drop-shadow(0 4px 12px rgba(139,195,74,0.3))"}}>🐴</div>
+            <h1 style={{fontSize:"22px",fontWeight:800,color:C.accent,margin:"0 0 4px",letterSpacing:"-0.5px"}}>Эмч Отгоо</h1>
+            <p style={{fontSize:"11px",color:C.txt3,margin:0}}>Мал эмнэлгийн мэргэжлийн Pro систем</p>
+            <div style={{marginTop:"8px",display:"inline-flex",alignItems:"center",gap:"4px",padding:"4px 12px",borderRadius:"20px",background:online?"rgba(139,195,74,0.08)":"rgba(255,82,82,0.08)",border:`1px solid ${online?"rgba(139,195,74,0.2)":"rgba(255,82,82,0.2)"}`}}>
+              <div style={{width:6,height:6,borderRadius:"50%",background:online?C.accent:"#FF5252"}}/><span style={{fontSize:"9px",color:online?C.accent:"#FF5252",fontWeight:600}}>{online?"Онлайн — AI идэвхтэй":"Офлайн — мэдээллийн сан"}</span>
+            </div>
+          </div>
+
+          <button onClick={()=>fr.current?.click()} style={{width:"100%",padding:"14px",marginBottom:"10px",borderRadius:"12px",border:`1px dashed ${C.accent}30`,background:`${C.accent}06`,color:C.accent,cursor:"pointer",fontSize:"13px",fontWeight:600,display:"flex",alignItems:"center",justifyContent:"center",gap:"8px",transition:"all 0.2s"}}>📷 Зураг оруулж оношлуулах</button>
+
+          <p style={{fontSize:"9px",color:C.accent,marginBottom:"6px",fontWeight:700,textTransform:"uppercase",letterSpacing:"1.5px"}}>Малын төрөл сонгох</p>
+          <div style={{display:"flex",gap:"4px",marginBottom:"12px"}}>{ANIMALS.map(a=>(<button key={a.id} onClick={()=>setAnim(anim?.id===a.id?null:a)} style={{flex:"1 1 auto",padding:"10px 4px",borderRadius:"10px",border:anim?.id===a.id?`2px solid ${C.accent}`:"1px solid #ffffff08",background:anim?.id===a.id?`${C.accent}10`:"rgba(255,255,255,0.015)",color:C.txt,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:"2px",transition:"all 0.2s"}}><span style={{fontSize:"24px"}}>{a.e}</span><span style={{fontSize:"10px",fontWeight:600}}>{a.n}</span></button>))}</div>
+
+          {anim&&(<div style={{animation:"fi 0.3s",marginBottom:"12px"}}><p style={{fontSize:"9px",color:C.accent,marginBottom:"6px",fontWeight:700,textTransform:"uppercase",letterSpacing:"1.5px"}}>Эрхтэн тогтолцоо</p><div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"4px"}}>{SYSTEMS.map(s=>(<button key={s.id} onClick={()=>startEx(anim,s)} style={{padding:"8px 4px",borderRadius:"8px",border:"1px solid #ffffff06",background:"rgba(255,255,255,0.015)",color:C.txt,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:"2px",fontSize:"9px",transition:"all 0.15s"}}><span style={{fontSize:"16px"}}>{s.i}</span>{s.n}</button>))}</div></div>)}
+
+          <div style={{display:"flex",flexDirection:"column",gap:"4px"}}>{[{t:"🚨 Мал хэвтэж босохгүй",u:1},{t:"🐣 Төрөлтийн хүндрэл яаралтай",u:1},{t:"💉 Вакцинжуулалтын хуваарь"},{t:"🧮 Эмийн тун тооцоолох"}].map((q,i)=>(<button key={i} onClick={()=>q.t.includes("тооцоолох")?setMode("calc"):qk(q.t)} style={{padding:"10px 14px",borderRadius:"10px",border:q.u?`1px solid rgba(255,82,82,0.12)`:"1px solid #ffffff06",background:q.u?"rgba(255,82,82,0.03)":"rgba(255,255,255,0.01)",color:q.u?"#FF8A80":C.txt3,cursor:"pointer",fontSize:"12px",textAlign:"left",fontWeight:500,transition:"all 0.15s"}}>{q.t}</button>))}</div>
+        </div>)}
+
+        {/* IMAGE FORM */}
+        {mode==="imgForm"&&(<div style={{animation:"fi 0.3s"}}>
+          <h3 style={{fontSize:"14px",fontWeight:700,color:C.accent,margin:"0 0 8px"}}>📷 Зураг оношилгоо</h3>
+          {imgPrev&&<div style={{marginBottom:"10px",borderRadius:"12px",overflow:"hidden",border:`1px solid ${C.accent}15`}}><img src={imgPrev} alt="" style={{width:"100%",maxHeight:"200px",objectFit:"cover"}}/></div>}
+
+          <p style={{fontSize:"9px",color:C.accent,marginBottom:"6px",fontWeight:700,textTransform:"uppercase",letterSpacing:"1px"}}>Малын төрөл</p>
+          <div style={{display:"flex",gap:"4px",marginBottom:"12px"}}>{ANIMALS.map(a=>(<button key={a.id} onClick={()=>setImgAnim(a.n)} style={tb(imgAnim===a.n)}>{a.e} {a.n}</button>))}</div>
+
+          <p style={{fontSize:"9px",color:C.accent,marginBottom:"6px",fontWeight:700,textTransform:"uppercase",letterSpacing:"1px"}}>Нэмэлт тайлбар <span style={{fontWeight:400,color:C.txt3}}>(заавал биш)</span></p>
+          <textarea value={imgNote} onChange={e=>setImgNote(e.target.value)} placeholder={"Жишээ:\n• 3 настай үнээ, 2 хоногийн өмнөөс дохолж эхэлсэн\n• Температур 40.2°C\n• Зүүн урд хөлний туурайн завсарт шарх байна\n• Сүргт 2 мал ижил шинжтэй"} rows={5} style={{width:"100%",padding:"10px 12px",borderRadius:"10px",background:"rgba(255,255,255,0.03)",border:`1px solid ${C.accent}15`,color:C.txt,fontSize:"12px",outline:"none",fontFamily:"inherit",resize:"none",boxSizing:"border-box",lineHeight:1.6}}/>
+
+          <div style={{display:"flex",gap:"6px",marginTop:"10px"}}>
+            <button onClick={submitImg} style={{flex:1,padding:"12px",borderRadius:"10px",border:"none",background:`linear-gradient(135deg,${C.accent2},${C.accent})`,color:"#1a1a1a",cursor:"pointer",fontSize:"13px",fontWeight:700,boxShadow:`0 2px 12px ${C.accent}30`}}>{online&&key?"🐴 Эмч Отгоо-оор оношлуулах":"📋 Мэдээллийн сангаас хайх"}</button>
+            <button onClick={()=>{setMode("home");setImgPrev(null);}} style={{padding:"12px 16px",borderRadius:"10px",border:"1px solid #ffffff08",background:"transparent",color:C.txt3,cursor:"pointer",fontSize:"12px"}}>✕</button>
+          </div>
+        </div>)}
+
+        {/* DISEASES */}
+        {mode==="diseases"&&(<div style={{animation:"fi 0.3s"}}>
+          <div style={{display:"flex",gap:"3px",marginBottom:"8px"}}>{Object.entries(DISEASES).map(([k,v])=>(<button key={k} onClick={()=>{setDF(k);setEI(null);}} style={tb(dF===k)}>{v.l}</button>))}</div>
+          {DISEASES[dF]?.d.map((d,i)=>(<div key={i} style={{marginBottom:"4px",borderRadius:"10px",border:"1px solid #ffffff06",background:eI===i?`${C.accent}06`:"rgba(255,255,255,0.012)",overflow:"hidden"}}>
+            <button onClick={()=>setEI(eI===i?null:i)} style={{width:"100%",padding:"10px 12px",border:"none",background:"transparent",color:C.txt,cursor:"pointer",textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center"}}><div><span style={{fontWeight:600,fontSize:"12px"}}>{d.n}</span>{d.z&&<span style={{marginLeft:"6px",fontSize:"8px",color:"#FF8A80",background:"rgba(255,82,82,0.08)",padding:"2px 5px",borderRadius:"4px",fontWeight:600}}>ЗООНОЗ</span>}</div><span style={{fontSize:"10px",color:"#555",transition:"transform 0.2s",transform:eI===i?"rotate(180deg)":"none"}}>▼</span></button>
+            {eI===i&&(<div style={{padding:"0 12px 12px",fontSize:"11px",lineHeight:1.6,animation:"fi 0.2s"}}><div><span style={{color:C.accent,fontWeight:600}}>Шинж:</span> {d.s}</div>{d.t&&<div style={{marginTop:"2px"}}><span style={{color:C.accent,fontWeight:600}}>💊:</span> {d.t}</div>}{d.q&&<div style={{marginTop:"4px",padding:"6px 8px",borderRadius:"6px",background:"rgba(255,152,0,0.04)",border:"1px solid rgba(255,152,0,0.08)"}}><span style={{color:"#FFB74D",fontWeight:600}}>🛡️</span> {d.q}</div>}<button onClick={()=>{setMode("chat");send(`${d.n} өвчний бүрэн оношилгоо, эмчилгээ, хорио цээрийн протокол бич.`);}} style={{marginTop:"6px",padding:"6px 14px",borderRadius:"8px",border:"none",background:`linear-gradient(135deg,${C.accent2},${C.accent})`,color:"#1a1a1a",cursor:"pointer",fontSize:"10px",fontWeight:700}}>🐴 Дэлгэрэнгүй</button></div>)}
+          </div>))}
+        </div>)}
+
+        {/* CALCULATOR */}
+        {mode==="calc"&&(<div style={{animation:"fi 0.3s"}}>
+          <h3 style={{fontSize:"14px",fontWeight:700,color:C.accent,margin:"0 0 10px"}}>🧮 Эмийн тун тооцоолуур</h3>
+          <div style={{marginBottom:"8px"}}><p style={{fontSize:"9px",color:C.accent,fontWeight:700,marginBottom:"4px"}}>МАЛЫН ТӨРӨЛ</p><div style={{display:"flex",gap:"4px"}}>{ANIMALS.map(a=>(<button key={a.id} onClick={()=>{setCAnim(a.n);setCWt(a.w);}} style={tb(cAnim===a.n)}>{a.e} {a.n}</button>))}</div></div>
+          <div style={{marginBottom:"8px"}}><p style={{fontSize:"9px",color:C.accent,fontWeight:700,marginBottom:"4px"}}>ЖИН (кг)</p><div style={{display:"flex",alignItems:"center",gap:"8px"}}><input type="range" min={5} max={800} value={cWt} onChange={e=>setCWt(+e.target.value)} style={{flex:1,accentColor:C.accent}}/><input type="number" value={cWt} onChange={e=>setCWt(+e.target.value||0)} style={{width:"60px",padding:"6px 8px",borderRadius:"8px",background:"rgba(255,255,255,0.04)",border:`1px solid ${C.accent}15`,color:C.txt,fontSize:"14px",textAlign:"center",outline:"none",fontWeight:700}}/><span style={{fontSize:"11px",color:C.txt3}}>кг</span></div></div>
+          <div style={{marginBottom:"10px"}}><p style={{fontSize:"9px",color:C.accent,fontWeight:700,marginBottom:"4px"}}>ЭМ</p><div style={{display:"flex",gap:"3px",flexWrap:"wrap"}}>{DRUGS.map((d,i)=>(<button key={i} onClick={()=>setCDrug(i)} style={{...tb(cDrug===i),fontSize:"9px"}}>{d.name}</button>))}</div></div>
+          <div style={{padding:"14px",borderRadius:"12px",background:`${C.accent}08`,border:`1px solid ${C.accent}20`}}>
+            <div style={{fontSize:"14px",fontWeight:700,color:C.accent,marginBottom:"4px"}}>{drug.name}</div>
+            <div style={{fontSize:"10px",color:C.txt3}}>Концентраци: {drug.conc} | Зам: {drug.route} | {drug.freq}</div>
+            {drug.wd&&<div style={{fontSize:"10px",color:"#FFB74D",marginTop:"2px"}}>⏱️ Хаялт: {drug.wd}</div>}
+            {dpk===0?(<div style={{fontSize:"14px",color:"#FF5252",fontWeight:700,marginTop:"10px"}}>⚠️ {cAnim}-д ХОРИГЛОНО!</div>):(<div style={{marginTop:"8px",padding:"12px",background:"rgba(0,0,0,0.25)",borderRadius:"10px"}}>
+              <div style={{fontSize:"11px",color:C.txt3}}>{dpk} {drug.iu?"IU":"мг"}/кг × {cWt}кг =</div>
+              {!drug.dm&&<div style={{fontSize:"16px",fontWeight:700,color:C.txt}}>{td.toLocaleString()} {drug.iu?"IU":"мг"}</div>}
+              <div style={{fontSize:"28px",fontWeight:800,color:C.accent,marginTop:"4px"}}>{ml.toFixed(1)} мл</div>
+            </div>)}
+            <button onClick={()=>{setMode("chat");send(`${drug.name} ${cAnim}-д ${cWt}кг жинтэй малд хэрэглэх бүрэн заавар бич.`);}} style={{marginTop:"8px",padding:"8px",borderRadius:"8px",border:"none",background:`linear-gradient(135deg,${C.accent2},${C.accent})`,color:"#1a1a1a",cursor:"pointer",fontSize:"11px",fontWeight:700,width:"100%"}}>🐴 Дэлгэрэнгүй заавар</button>
+          </div>
+        </div>)}
+
+        {/* LAB / REPRO / SURGERY — generic list renderer */}
+        {["lab","repro","surg"].includes(mode)&&(<div style={{animation:"fi 0.3s"}}>
+          {(()=>{const DB=mode==="lab"?LAB:mode==="repro"?REPRO:SURG;return<><div style={{display:"flex",gap:"3px",marginBottom:"8px",flexWrap:"wrap"}}>{Object.entries(DB).map(([k,v])=>(<button key={k} onClick={()=>{setSub(k);setEI(null);}} style={tb(sub===k||(!sub&&k===Object.keys(DB)[0]))}>{v.t}</button>))}</div>{(DB[sub||Object.keys(DB)[0]]?.d||[]).map((item,i)=>(card(<div key={i}><div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"3px"}}><span style={{fontSize:"16px"}}>{item.i}</span><span style={{fontWeight:600,fontSize:"12px",color:C.accent}}>{item.l}</span></div><p style={{fontSize:"11px",color:C.txt2,margin:0,lineHeight:1.6}}>{item.d}</p></div>)))}<button onClick={()=>{setMode("chat");send(`${DB[sub||Object.keys(DB)[0]]?.t} дэлгэрэнгүй заавар бич.`);}} style={{marginTop:"4px",padding:"8px",borderRadius:"8px",border:"none",background:`linear-gradient(135deg,${C.accent2},${C.accent})`,color:"#1a1a1a",cursor:"pointer",fontSize:"10px",fontWeight:700,width:"100%"}}>🐴 AI дэлгэрэнгүй</button></>;})()}
+        </div>)}
+
+        {/* REGIONS */}
+        {mode==="region"&&(<div style={{animation:"fi 0.3s"}}><h3 style={{fontSize:"13px",fontWeight:700,color:C.accent,margin:"0 0 8px"}}>🗺️ Бүс нутгийн эпидемиологи</h3>{REGIONS.map((r,i)=>(card(<div key={i}><div style={{fontWeight:700,fontSize:"12px",color:C.accent,marginBottom:"2px"}}>{r.r}</div><div style={{fontSize:"9px",color:C.txt3,marginBottom:"4px"}}>{r.a}</div><div style={{fontSize:"11px",color:C.txt2,lineHeight:1.5}}><div><span style={{color:"#FF8A80",fontWeight:600}}>Өвчин:</span> {r.d}</div><div><span style={{color:"#FFB74D",fontWeight:600}}>Эрсдэл:</span> {r.risk}</div><div><span style={{color:C.accent,fontWeight:600}}>Вакцин:</span> {r.v}</div></div><button onClick={()=>{setMode("chat");send(`${r.r} бүсийн дэлгэрэнгүй эпидемиологи бич.`);}} style={{marginTop:"6px",padding:"4px 12px",borderRadius:"6px",border:"none",background:`${C.accent}20`,color:C.accent,cursor:"pointer",fontSize:"9px",fontWeight:600}}>🐴 AI</button></div>)))}</div>)}
+
+        {/* HISTORY */}
+        {mode==="history"&&(<div style={{animation:"fi 0.3s"}}><h3 style={{fontSize:"13px",fontWeight:700,color:C.accent,margin:"0 0 8px"}}>💾 Кейс түүх ({cases.length})</h3>{cases.map((c,i)=>(<div key={i} style={{marginBottom:"5px",padding:"10px",borderRadius:"8px",border:"1px solid #ffffff06",background:"rgba(255,255,255,0.012)"}}><div style={{fontSize:"9px",color:C.txt3,marginBottom:"3px"}}>{new Date(c.d).toLocaleDateString("mn-MN")}</div><div style={{fontSize:"11px",color:C.accent,fontWeight:600,marginBottom:"2px"}}>{c.q.slice(0,80)}</div><div style={{fontSize:"10px",color:C.txt2,lineHeight:1.4}}>{c.a.slice(0,200)}...</div></div>))}</div>)}
+
+        {/* TRIAGE */}
+        {mode==="triage"&&(<div style={{animation:"fi 0.3s"}}>
+          <div style={{marginBottom:"10px"}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:"4px"}}><span style={{fontSize:"9px",color:C.accent,fontWeight:700}}>АНАМНЕЗ ЦУГЛУУЛАЛТ</span><span style={{fontSize:"9px",color:C.txt3}}>{tS+1}/{TQ.length}</span></div><div style={{height:"3px",background:"#ffffff08",borderRadius:"2px"}}><div style={{height:"100%",width:`${((tS+1)/TQ.length)*100}%`,background:`linear-gradient(90deg,${C.accent2},${C.accent})`,borderRadius:"2px",transition:"width 0.3s"}}/></div></div>
+          <div style={{display:"flex",gap:"8px",marginBottom:"10px",padding:"10px",background:`${C.accent}06`,borderRadius:"10px"}}><span style={{fontSize:"24px"}}>{anim?.e}</span><div><div style={{fontSize:"12px",fontWeight:600,color:C.accent}}>{anim?.n}</div><div style={{fontSize:"10px",color:C.txt3}}>{sys?.i} {sys?.n}</div></div></div>
+          {Object.entries(tD).map(([q,a],i)=>(<div key={i} style={{marginBottom:"3px",padding:"6px 8px",background:"rgba(255,255,255,0.015)",borderRadius:"6px",fontSize:"10px"}}><div style={{color:C.txt3}}>{q}</div><div style={{color:C.accent,fontWeight:500}}>{a}</div></div>))}
+          <div style={{padding:"12px",background:`${C.accent}06`,borderRadius:"12px",border:`1px solid ${C.accent}15`,marginBottom:"8px"}}><div style={{fontSize:"9px",color:C.accent,fontWeight:700,marginBottom:"4px"}}>АСУУЛТ {tS+1}</div><div style={{fontSize:"14px",fontWeight:600,color:C.txt}}>{TQ[tS]}</div></div>
+          <div style={{display:"flex",gap:"4px"}}><input autoFocus value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&inp.trim())tAns(inp.trim());}} placeholder="Хариулт..." style={{flex:1,padding:"10px 12px",borderRadius:"10px",background:"rgba(255,255,255,0.03)",border:`1px solid ${C.accent}12`,color:C.txt,fontSize:"13px",outline:"none",fontFamily:"inherit"}}/><button onClick={()=>inp.trim()&&tAns(inp.trim())} disabled={!inp.trim()} style={{padding:"10px 16px",borderRadius:"10px",border:"none",background:inp.trim()?`linear-gradient(135deg,${C.accent2},${C.accent})`:"rgba(255,255,255,0.02)",color:inp.trim()?"#1a1a1a":"#555",cursor:inp.trim()?"pointer":"default",fontWeight:700}}>→</button></div>
+          <div style={{display:"flex",gap:"4px",marginTop:"4px"}}>{["Мэдэхгүй","Хэмжээгүй"].map(b=>(<button key={b} onClick={()=>tAns(b)} style={{padding:"4px 10px",borderRadius:"6px",border:"1px solid #ffffff06",background:"transparent",color:C.txt3,cursor:"pointer",fontSize:"10px"}}>{b}</button>))}</div>
+        </div>)}
+
+        {/* CHAT */}
+        {mode==="chat"&&msgs.map((m,i)=>(<div key={i} style={{display:"flex",justifyContent:m.role==="user"?"flex-end":"flex-start",gap:"6px",alignItems:"flex-start"}}>
+          {m.role==="assistant"&&<div style={{width:26,height:26,borderRadius:"8px",background:`linear-gradient(135deg,${C.accent2},${C.accent})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",flexShrink:0,marginTop:"2px"}}>🐴</div>}
+          <div style={m.role==="user"?{maxWidth:"82%",padding:"10px 14px",borderRadius:"16px 16px 4px 16px",background:`linear-gradient(135deg,${C.accent2},${C.accent})`,fontSize:"12px",lineHeight:1.5,color:"#1a1a1a",fontWeight:500}:{maxWidth:"90%",padding:"12px 14px",borderRadius:"16px 16px 16px 4px",background:"rgba(255,255,255,0.03)",border:"1px solid #ffffff06",lineHeight:1.6}}>
+            {m.role==="assistant"?fmt(m.content):<span>{m.content}</span>}
+          </div>
+        </div>))}
+        {load&&(<div style={{display:"flex",gap:"6px",alignItems:"flex-start"}}><div style={{width:26,height:26,borderRadius:"8px",background:`linear-gradient(135deg,${C.accent2},${C.accent})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",flexShrink:0}}>🐴</div><div style={{padding:"12px 16px",borderRadius:"16px 16px 16px 4px",background:"rgba(255,255,255,0.03)",border:"1px solid #ffffff06",display:"flex",gap:"5px",alignItems:"center"}}><style>{`@keyframes p{0%,100%{opacity:.2}50%{opacity:1}}`}</style>{[0,1,2].map(i=><div key={i} style={{width:6,height:6,borderRadius:"50%",background:C.accent,animation:"p 1.4s infinite",animationDelay:`${i*0.2}s`}}/>)}<span style={{fontSize:"10px",color:C.txt3,marginLeft:"4px"}}>Эмч Отгоо шинжилж байна...</span></div></div>)}
+        <div ref={er}/>
+      </div>
+
+      {/* INPUT */}
+      {/* CHAT INPUT — БҮХҮН ХУУДСАНД */}
+      <div style={{padding:"10px 14px 16px",flexShrink:0,background:"rgba(10,15,10,0.8)",borderTop:"1px solid rgba(139,195,74,0.06)"}}>
+        <div style={{display:"flex",gap:"6px",alignItems:"flex-end"}}>
+          <button onClick={()=>fr.current?.click()} style={{width:36,height:36,borderRadius:"10px",border:`1px solid ${C.accent}12`,background:"rgba(255,255,255,0.02)",color:C.accent,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",flexShrink:0}}>📷</button>
+          <div style={{flex:1,display:"flex",alignItems:"flex-end",background:"rgba(255,255,255,0.025)",borderRadius:"12px",border:`1px solid ${C.accent}10`,padding:"3px"}}>
+            <textarea ref={ir} value={inp} onChange={e=>{setInp(e.target.value);e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,100)+"px";}} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();if(mode!=="chat")setMode("chat");send(inp);}}} placeholder="Эмч Отгоо-оос асуух..." rows={1} style={{flex:1,background:"transparent",border:"none",outline:"none",color:C.txt,fontSize:"13px",padding:"8px 10px",resize:"none",maxHeight:"100px",lineHeight:1.4,fontFamily:"inherit"}}/>
+          </div>
+          <button onClick={()=>{if(mode!=="chat")setMode("chat");send(inp);}} disabled={!inp.trim()||load} style={{width:36,height:36,borderRadius:"10px",border:"none",background:inp.trim()&&!load?`linear-gradient(135deg,${C.accent2},${C.accent})`:"rgba(255,255,255,0.02)",color:inp.trim()&&!load?"#1a1a1a":"#555",cursor:inp.trim()&&!load?"pointer":"default",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",flexShrink:0,fontWeight:800}}>↑</button>
+        </div>
+        <p style={{textAlign:"center",fontSize:"8px",color:`${C.accent}25`,marginTop:"6px",marginBottom:0}}>⚕️ Мэргэжлийн малын эмчийн үзлэгийг орлохгүй</p>
+      </div>
+
+      <style>{`@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}input::placeholder,textarea::placeholder{color:#4a6a4a}input[type=range]{height:4px}::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:${C.accent}15;border-radius:2px}`}</style>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+// Register Service Worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
