@@ -1,0 +1,19 @@
+{
+  "name": "Эмч Отгоо — Мал эмнэлгийн Pro систем",
+  "short_name": "Эмч Отгоо",
+  "description": "Малын өвчин оношлох, эмийн тун тооцоолох, зураг оношилгоо",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0F0A",
+  "theme_color": "#689F38",
+  "orientation": "portrait",
+  "lang": "mn",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23689F38'/><text y='68' x='50' text-anchor='middle' font-size='55'>⚕️</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
