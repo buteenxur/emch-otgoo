@@ -203,8 +203,12 @@ const App = function EmchOtgoo(){
   const [cAnim,setCAnim]=React.useState("Үхэр");
   const [cWt,setCWt]=React.useState(400);
   const [sub,setSub]=React.useState("");
-  const DEFAULT_KEY="AIzaSyCUMSoCE5XYaWoktyH_qetFYDnKR62xR7M";
-  const [key,setKey]=React.useState(()=>{try{return localStorage.getItem("gk")||DEFAULT_KEY}catch{return DEFAULT_KEY}});
+  const DEFAULT_KEY="";
+  const [key,setKey]=React.useState(()=>{try{return localStorage.getItem("gk")||""}catch{return""}});
+  // Fetch key from server on load
+  React.useEffect(()=>{
+    if(!key){fetch("/api/key").then(r=>r.json()).then(d=>{if(d.key){setKey(d.key);try{localStorage.setItem("gk",d.key)}catch{}}}).catch(()=>{});}
+  },[]);
   const [online,setOnline]=React.useState(navigator.onLine);
   const [cases,setCases]=React.useState(()=>{try{return JSON.parse(localStorage.getItem("vc")||"[]")}catch{return[]}});
   const [settings,setSettings]=React.useState(false);
